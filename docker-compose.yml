@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:latest
+    environment:
+       - POSTGRES_DB=Shop
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=postgres
+    ports:
+       - 5234:15234
+    volumes:
+       - ./postgres-data/postgres:/var/lib/postgresql/data
+    restart: always
+    
+  auth:
+    build:
+      context: .
+      dockerfile: ./Auth/Dockerfile
+    depends_on:
+      - db
+    command: flask run -h 0.0.0.0 -p 5000
+    ports:
+      - 5000:5000
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: ./Shop/Dockerfile
+    depends_on:
+      - db
+      - auth
+    command: flask run -h 0.0.0.0 -p 1237
+    ports:
+      - 1237:1237
+    restart: always
