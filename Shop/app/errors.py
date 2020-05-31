@@ -11,8 +11,8 @@ OK = {"text" : "[OK]"}
 
 JSON_1 = {"text" : "[JSON-1] Couldn't get json from request"}
 
-PGNT_1 = {"text" : "[PGNT-1] Arguement 'pageSize' must be in range from 1 to 50"}
-PGNT_2 = {"text" : "[PGNT-2] Arguement 'page' must be in query json"}
+PGNT_1 = {"text" : "[PGNT-1] Arguement 'page_size' must be in range from 1 to 50"}
+PGNT_2 = {"text" : "[PGNT-2] Arguement 'page_size' must be integer"}
 PGNT_3 = {"text" : "[PGNT-3] Arguement 'page' out of range"}
 
 AUTH_0 = {"text" : "[AUTH-0] Not authorized"}

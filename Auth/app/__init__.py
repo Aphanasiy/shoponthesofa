@@ -6,8 +6,9 @@ from .config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 
+
+from app.errors import *
 from app import database
 shdb = database.ShopDatabase()
 
-from app import auth
 from app import routes

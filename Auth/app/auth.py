@@ -12,7 +12,7 @@ def cipher(password):
 
 
 @app.route('/auth', methods=['GET'])
-def auth():
+def __auth():
     if not request.json:
         return make_error_response(AUTH_1)
     if "login" not in request.json:
@@ -36,7 +36,7 @@ def auth():
 
 
 @app.route('/register', methods=['POST'])
-def register():
+def __register():
     if not request.json:
         return make_error_response(AUTH_1)
     if "login" not in request.json:
@@ -59,7 +59,7 @@ def register():
 
 
 @app.route('/logout', methods=['GET'])
-def logout():
+def __logout():
     res_login = make_response()
     login = request.json["login"]
     res_login.set_cookie("login", login, max_age=0)

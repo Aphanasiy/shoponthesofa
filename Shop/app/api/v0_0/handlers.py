@@ -45,21 +45,22 @@ def delete_item_0_0():
     return jsonify(), 200
 
 
-@app.route(f'/api/v{API_VERSION}/items', methods=['GET'])
-def get_items_0_0():
+@app.route(f'/api/v{API_VERSION}/items/<int:page>', methods=['GET'])
+def get_items_0_0(page):
+    page -= 1
     count = shdb.read("SELECT COUNT(*) FROM Items.ItemInfo")[0][0]
     
-    if not request.json:
-        return make_error_response(JSON_1)
-    if 'pageSize' not in request.json:
-        return make_error_response(PGNT_1)
-    page_size = request.json["pageSize"]
-    if not (1 <= page_size <= 50):
-        return make_error_response(PGNT_1)
+    page_size = request.args.get("page_size")
+    if page_size == None:
+        page_size = 20    
+    else:
+        try:
+            page_size = int(page_size)
+        except:
+            return make_error_response(PGNT_2)
+        if not (1 <= page_size <= 50):
+            return make_error_response(PGNT_1)    
     
-    if 'page' not in request.json:
-        return make_error_response(PGNT_2)
-    page = request.json["page"] - 1
     if not (0 <= page < -(-count // page_size)):
         resp_json = {"pages": -(-count // page_size)}
         resp_json.update(PGNT_3)
@@ -75,13 +76,8 @@ def get_items_0_0():
                     }), 200
 
 
-@app.route(f'/api/v{API_VERSION}/item', methods=['GET'])
-def get_item_0_0():
-    if not request.json:
-        return make_error_response(JSON_1)
-    if not 'ean' in request.json:
-        return make_error_response(EAN_1)
-    EAN = request.json["ean"]
+@app.route(f'/api/v{API_VERSION}/item/<int:EAN>', methods=['GET'])
+def get_item_0_0(EAN):
     x = shdb.read("SELECT * FROM Items.ItemInfo WHERE \"EAN\" = {}".format(EAN))
     if len(x) == 0:
         return make_error_response(EAN_2)
