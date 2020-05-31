@@ -1,5 +1,7 @@
 import psycopg2 as pg
 import logging as lg
+
+import sys
 import os
 import time
 
@@ -7,7 +9,7 @@ DEBUG = True if "DEBUG" not in os.environ else bool(int(os.environ["DEBUG"]))
 
 class ShopDatabase:
     def __init__(self):
-        lg.info("AUTH: in __init__")
+        lg.info("AUTH: in __init__", file=sys.stderr)
         success = False
         while not success:
           try:
@@ -20,7 +22,7 @@ class ShopDatabase:
                     dbname="ShopOnTheCoach"
                 )
             else:
-                print("AUTH INITED INSIDE CONTAINER")
+                print("AUTH INITED INSIDE CONTAINER", file=sys.stderr)
                 self.connection = pg.connect(
                     host="db",
                     #port="5234",
@@ -33,7 +35,7 @@ class ShopDatabase:
             self.__db_init()
             success = True
           except:
-            print("AUTH: Smth wrong with de base")
+            print("AUTH: Failed to connect. Retry", file=sys.stderr)
             time.sleep(10)
 
     def __db_init(self):
@@ -58,10 +60,10 @@ class ShopDatabase:
            AND    table_name = 'users'
            );
         '''
-        iteminfo_exists = self.read(check_request)[0][0]
-        print("AUTH: Users", iteminfo_exists)
+        iteminfo_exists = self.read(check_request_users)[0][0]
+        print("AUTH: Users", iteminfo_exists, file=sys.stderr)
         if (not iteminfo_exists):
-            init_request_2 = """
+            init_request_table_1 = """
                 CREATE TABLE users.users (
                     login text,
                     password text,
@@ -70,7 +72,7 @@ class ShopDatabase:
                     role varchar(12) DEFAULT 'user'
                 );
             """
-            self.execute(init_request_1, "Creating users.users")
+            self.execute(init_request_table_1, "Creating users.users")
         
         #  Tokens check
         check_request_users = '''
@@ -82,16 +84,16 @@ class ShopDatabase:
            );
         '''
         iteminfo_exists = self.read(check_request)[0][0]
-        print("AUTH: Tokens", iteminfo_exists)
+        print("AUTH: Tokens", iteminfo_exists, file=sys.stderr)
         if (not iteminfo_exists):
-            init_request_2 = """
-                CREATE TABLE users.iteminfo (
+            init_request_table_2 = """
+                CREATE TABLE users.tokens (
                     'login' text,
                     'refresh_token' text,
                     'access_token' text,
                 );
             """
-            self.execute(init_request_1, "Creating users.tokens")
+            self.execute(init_request_table_2, "Creating users.tokens")
         
         #  distributors check
         check_request_users = '''
@@ -103,15 +105,15 @@ class ShopDatabase:
            );
         '''
         iteminfo_exists = self.read(check_request)[0][0]
-        print("AUTH: Distributors", iteminfo_exists)
+        print("AUTH: Distributors", iteminfo_exists, file=sys.stderr)
         if (not iteminfo_exists):
-            init_request_3 = """
+            init_request_table_3 = """
                 CREATE TABLE users.distributors (
                     'DistributorName' text NOT NULL,
                     'DistributorID' int NOT NULL,
                 );
             """
-            self.execute(init_request_1, "Creating users.distributors")
+            self.execute(init_request_table_3, "Creating users.distributors")
 
     def execute(self, request, message=""):
         lg.info("Выполняю запрос" 

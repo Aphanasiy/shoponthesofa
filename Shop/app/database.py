@@ -1,6 +1,7 @@
 import psycopg2 as pg
 import logging as lg
 import os
+import time
 
 DEBUG = True if "DEBUG" not in os.environ else bool(int(os.environ["DEBUG"]))
 
